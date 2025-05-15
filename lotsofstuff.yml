@@ -19,13 +19,22 @@
         dest: "{{ deploy_dir }}/docker-compose.yml"
         mode: '0644'
 
+    # Optional: Uncomment if nginx.conf is needed
     # - name: Copy nginx.conf
     #   copy:
     #     src: templates/nginx.conf
     #     dest: "{{ deploy_dir }}/nginx.conf"
     #     mode: '0644'
 
-    - name: Launch containers
+    # If using Docker Compose v1
+    - name: Launch containers (v1)
       shell: docker-compose up -d
+      args:
+        chdir: "{{ deploy_dir }}"
+      ignore_errors: yes  # Optional, in case this fails and you want to try v2 next
+
+    # If using Docker Compose v2
+    - name: Launch containers (v2)
+      shell: docker compose up -d
       args:
         chdir: "{{ deploy_dir }}"
