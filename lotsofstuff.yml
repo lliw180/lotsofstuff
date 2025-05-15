@@ -1,7 +1,31 @@
 ---
-- hosts: server
+- name: Deploy Lotod Docker Stack
+  hosts: lotod_hosts  # You can change this to your inventory group
   become: true
+
+  vars:
+    deploy_dir: /opt/lotod
+
   tasks:
-    - name: Print OS info
-      ansible.builtin.package:
-        name: apache2
+    - name: Ensure deployment directory exists
+      file:
+        path: "{{ deploy_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose template
+      template:
+        src: templates/docker-compose-lotod-stuff.yml.j2
+        dest: "{{ deploy_dir }}/docker-compose.yml"
+        mode: '0644'
+
+    - name: Copy nginx.conf
+      copy:
+        src: templates/nginx.conf  # adjust if stored elsewhere
+        dest: "{{ deploy_dir }}/nginx.conf"
+        mode: '0644'
+
+    - name: Launch containers
+      shell: docker-compose up -d
+      args:
+        chdir: "{{ deploy_dir }}"
