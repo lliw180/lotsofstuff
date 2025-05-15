@@ -15,13 +15,13 @@
 
     - name: Copy docker-compose template
       template:
-        src: docker-compose.yml.j2   # changed from templates/docker-compose-lotod-stuff.yml.j2
+        src: templates/docker-compose-lotod-stuff.yml.j2   # Correct relative path here
         dest: "{{ deploy_dir }}/docker-compose.yml"
         mode: '0644'
 
     - name: Copy nginx.conf
       copy:
-        src: nginx.conf   # assuming this file is also in the repo root or adjust path accordingly
+        src: templates/nginx.conf    # Assuming this file is inside the templates folder as well
         dest: "{{ deploy_dir }}/nginx.conf"
         mode: '0644'
 
