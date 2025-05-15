@@ -1,6 +1,6 @@
 ---
 - name: Deploy Lotod Docker Stack
-  hosts: lotod_hosts  # You can change this to your inventory group
+  hosts: server  # <-- changed from lotod_hosts to server
   become: true
 
   vars:
@@ -21,7 +21,7 @@
 
     - name: Copy nginx.conf
       copy:
-        src: templates/nginx.conf  # adjust if stored elsewhere
+        src: templates/nginx.conf
         dest: "{{ deploy_dir }}/nginx.conf"
         mode: '0644'
 
