@@ -26,14 +26,45 @@
     #     dest: "{{ deploy_dir }}/nginx.conf"
     #     mode: '0644'
 
-    # If using Docker Compose v1
+    # ---- INSTALL DOCKER ----
+    - name: Install Docker dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: true
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable
+        state: present
+        filename: docker
+
+    - name: Install Docker Engine
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: latest
+        update_cache: true
+
+    # ---- RUN CONTAINERS ----
     - name: Launch containers (v1)
       shell: docker-compose up -d
       args:
         chdir: "{{ deploy_dir }}"
-      ignore_errors: yes  # Optional, in case this fails and you want to try v2 next
+      ignore_errors: yes  # Try v2 if this fails
 
-    # If using Docker Compose v2
     - name: Launch containers (v2)
       shell: docker compose up -d
       args:
